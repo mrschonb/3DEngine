@@ -1,0 +1,22 @@
+Marcelo Schonbrunn Bonnin A01207573
+
+3D Graphics Engine in c++
+
+The intent of this project is to create a functional 3D engine in c++ that is capable of reading
+3D filetypes, namely .obj, and displaying them on the screen. This is achieved through the creation
+of 3 main struct types (mesh, triangle, object) which work in unision to create any specified object.
+In order to create 3D objects in a 2D screen matrix math is imperative. Matrixes are used to translate 
+points in 3D space to points in 2D space in a dynamic way. They are also to be utilized to rotate objects
+in space in order to show off their different sides and angles. If there is enough time, the project will
+include a very simplistic lighting and shadow system that uses will most likely use shadow mapping and not
+raytracing or raycasting to skip shadow calculations.
+The project will not include any form of GUI due to time restrictions and will only display objects fed
+to it directly through code or throught the cli. 
+
+Conecepts employed in the project
+Dynamic memory will be used to store 3D objects of unkown size.
+
+Pointers will be used all throughout the project to handle data
+
+Threads will be used to render multiple objects on the screen at once,
+or to do multiple matrix calculations at once without causing rendering slowdown
