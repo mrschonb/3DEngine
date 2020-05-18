@@ -1,0 +1,5 @@
+﻿  3DEngine.cpp
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine.cpp(184): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine.cpp(183): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine.cpp(182): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  3DEngine.vcxproj -> C:\Users\Marcelo\source\repos\3DEngine\Debug\3DEngine.exe
