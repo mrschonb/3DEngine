@@ -31,6 +31,8 @@ private:
 	mat4d projMat;
 	float fTheta;
 
+	vec3d camera;
+
 	void MultVectorMatrix(vec3d &in, vec3d &out, mat4d &m)
 	{
 		out.x = in.x * m.m[0][0] + in.y * m.m[1][0] + in.z * m.m[2][0] + m.m[3][0];
@@ -161,7 +163,10 @@ public:
 			float l = sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
 			normal.x /= l; normal.y /= l; normal.z /= l;
 
-			if (normal.z < 0)
+			//if (normal.z < 0)
+			if(normal.x * (tTranslated.p[0].x - camera.x)+
+				normal.y * (tTranslated.p[0].y - camera.y) +
+				normal.z * (tTranslated.p[0].z - camera.z) < 0.0f)
 			{
 				MultVectorMatrix(tTranslated.p[0], tProj.p[0], projMat);
 				MultVectorMatrix(tTranslated.p[1], tProj.p[1], projMat);

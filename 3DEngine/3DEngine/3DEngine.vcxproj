@@ -156,6 +156,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="OBJParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="olcConsoleGameEngine.h" />
