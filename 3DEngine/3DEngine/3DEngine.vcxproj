@@ -156,10 +156,14 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="OBJParser.cpp" />
+    <ClCompile Include="mat4d.cpp" />
+    <ClCompile Include="vec3d.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="mat4d.h" />
     <ClInclude Include="olcConsoleGameEngine.h" />
+    <ClInclude Include="Structs.h" />
+    <ClInclude Include="vec3d.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

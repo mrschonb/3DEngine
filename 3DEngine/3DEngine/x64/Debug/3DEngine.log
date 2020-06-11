@@ -1,8 +1,8 @@
 ﻿  3DEngine.cpp
-c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\olcconsolegameengine.h(742): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\olcconsolegameengine.h(1082): warning C4267: 'return': conversion from 'size_t' to 'unsigned int', possible loss of data
-c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\olcconsolegameengine.h(1179): warning C4312: 'type cast': conversion from 'DWORD' to 'olcConsoleGameEngine *' of greater size
-c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(189): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(188): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(187): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\structs.h(10): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(127): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(154): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(182): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(181): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\marcelo\source\repos\3dengine\3dengine\3dengine\3dengine.cpp(180): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   3DEngine.vcxproj -> C:\Users\Marcelo\source\repos\3DEngine\3DEngine\x64\Debug\3DEngine.exe

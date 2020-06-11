@@ -1,181 +1,173 @@
 // 3DEngine.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+/*
+This is a basic implementation of an engine capable of displaying 
+3D objects in an graphic environment
+
+In this particular instance, the windows Console is used as the graphic environment.
+
+Functions related to drawing on screen have all been taken from the 3DLib.h file
+Which in itself is a modified version of the olcConsoleGameEngine.h file
+Information regarding the original file can be found at the top of the 3DLib.h File
+
+As of 10/06/2020 this file is still not in its final version and may be modified
+in the future, Source Code and version history can be found in github.
+Github Repo: https://github.com/mrschonb/3DEngine
+
+
+Code Written by: Marcelo Schonbrunn Bonnin
+
+*/
+
 #include <iostream>
-#include "olcConsoleGameEngine.h"
+#include <algorithm>
 
-struct vec3d
-{
-	float x, y, z;
-};
+#include "3DLib.h"
+#include "mat4d.h"
+#include "vec3d.h"
 
-struct triangle 
-{
-	vec3d p[3];
-};
-
-struct mesh
-{
-	std::vector<triangle> tris;
-};
-
-struct mat4d
-{
-	float m[4][4] = {0};
-};
 
 class olcEngine3D : public olcConsoleGameEngine {
 
 private:
 	mesh meshCube;
 	mat4d projMat;
-	float fTheta;
+	float Theta;
 
 	vec3d camera;
 
-	void MultVectorMatrix(vec3d &in, vec3d &out, mat4d &m)
-	{
-		out.x = in.x * m.m[0][0] + in.y * m.m[1][0] + in.z * m.m[2][0] + m.m[3][0];
-		out.y = in.x * m.m[0][1] + in.y * m.m[1][1] + in.z * m.m[2][1] + m.m[3][1];
-		out.z = in.x * m.m[0][2] + in.y * m.m[1][2] + in.z * m.m[2][2] + m.m[3][2];
-		float w = in.x * m.m[0][3] + in.y * m.m[1][3] + in.z * m.m[2][3] + m.m[3][3];
-
-		if (w != 0)
-		{
-			out.x /= w; out.y /= w; out.z /= w;
-		}
-	}
-
 public:
 	olcEngine3D() {
-		m_sAppName = L"3D Engine Test";
-		fTheta = 0;
+		m_sAppName = L"3D Engine Test Console Engine Provided by @javidx9";
+		Theta = 0;
+	}
+
+	CHAR_INFO GetColour(float lum)
+	{
+		short bg_col, fg_col;
+		wchar_t sym;
+		int pixel_bw = (int)(13.0f*lum);
+		switch (pixel_bw)
+		{
+		case 0: bg_col = BG_BLACK; fg_col = FG_BLACK; sym = PIXEL_SOLID; break;
+
+		case 1: bg_col = BG_BLACK; fg_col = FG_DARK_GREY; sym = PIXEL_QUARTER; break;
+		case 2: bg_col = BG_BLACK; fg_col = FG_DARK_GREY; sym = PIXEL_HALF; break;
+		case 3: bg_col = BG_BLACK; fg_col = FG_DARK_GREY; sym = PIXEL_THREEQUARTERS; break;
+		case 4: bg_col = BG_BLACK; fg_col = FG_DARK_GREY; sym = PIXEL_SOLID; break;
+
+		case 5: bg_col = BG_DARK_GREY; fg_col = FG_GREY; sym = PIXEL_QUARTER; break;
+		case 6: bg_col = BG_DARK_GREY; fg_col = FG_GREY; sym = PIXEL_HALF; break;
+		case 7: bg_col = BG_DARK_GREY; fg_col = FG_GREY; sym = PIXEL_THREEQUARTERS; break;
+		case 8: bg_col = BG_DARK_GREY; fg_col = FG_GREY; sym = PIXEL_SOLID; break;
+
+		case 9:  bg_col = BG_GREY; fg_col = FG_WHITE; sym = PIXEL_QUARTER; break;
+		case 10: bg_col = BG_GREY; fg_col = FG_WHITE; sym = PIXEL_HALF; break;
+		case 11: bg_col = BG_GREY; fg_col = FG_WHITE; sym = PIXEL_THREEQUARTERS; break;
+		case 12: bg_col = BG_GREY; fg_col = FG_WHITE; sym = PIXEL_SOLID; break;
+		default:
+			bg_col = BG_BLACK; fg_col = FG_BLACK; sym = PIXEL_SOLID;
+		}
+
+		CHAR_INFO c;
+		c.Attributes = bg_col | fg_col;
+		c.Char.UnicodeChar = sym;
+		return c;
 	}
 
 public:
 	bool OnUserCreate() override {
-
-		//define the object for the mesh, in this case a cube. n.
-		meshCube.tris = {
-			//S face of cube
-			{0.0f,0.0f,0.0f,	0.0f,1.0f,0.0f,		1.0f,1.0f,0.0f},
-			{0.0f,0.0f,0.0f,	1.0f,1.0f,0.0f,		1.0f,0.0f,0.0f},
-			//E Face of cube
-			{1.0f,0.0f,0.0f,	1.0f,1.0f,0.0f,		1.0f,1.0f,1.0f},
-			{1.0f,0.0f,0.0f,	1.0f,1.0f,1.0f,		1.0f,0.0f,1.0f},
-			//N face of cube
-			{1.0f,0.0f,1.0f,	1.0f,1.0f,1.0f,		0.0f,1.0f,1.0f},
-			{1.0f,0.0f,1.0f,	0.0f,1.0f,1.0f,		0.0f,0.0f,1.0f},
-			//W face of cube
-			{0.0f,0.0f,1.0f,	0.0f,1.0f,1.0f,		0.0f,1.0f,0.0f},
-			{0.0f,0.0f,1.0f,	0.0f,1.0f,0.0f,		0.0f,0.0f,0.0f},
-			//TOP face of cube
-			{0.0f,1.0f,0.0f,	0.0f,1.0f,1.0f,		1.0f,1.0f,1.0f},
-			{0.0f,1.0f,0.0f,	1.0f,1.0f,1.0f,		1.0f,1.0f,0.0f},
-			//BOTTOM face of cube
-			{1.0f,0.0f,1.0f,	0.0f,0.0f,1.0f,		0.0f,0.0f,0.0f},
-			{1.0f,0.0f,1.0f,	0.0f,0.0f,0.0f,		1.0f,0.0f,0.0f},
-		};  
+		//Load ObjFile
+		if (!meshCube.loadOBJ("D:\\3D Objects\\LP_Cow.obj")) {exit(1);}
 
 		//Populate the projection matrix
-		float fNear = 0.1f;
-		float fFar = 1000.0f;
-		float fFov = 90.0f;
-		float fAspectRatio = (float)ScreenHeight() / (float)ScreenWidth();
-		float fFovRad = 1.0f / tanf(fFov *0.5f / 180.0f * 3.14159f);
-
-		projMat.m[0][0] = fAspectRatio * fFovRad;
-		projMat.m[1][1] = fFovRad;
-		projMat.m[2][2] = fFar / (fFar - fNear);
-		projMat.m[3][2] = (-fFar * fNear) / (fFar - fNear);
-		projMat.m[2][3] = 1.0f;
-		projMat.m[3][3] = 0.0f;
+		projMat = M_Projection(90.0f, (float)ScreenHeight() / (float)ScreenWidth(), 0.1f, 1000.0f);
 
 		return true;
 	}
-
-	//calculate normal lines using a triangle 
-	vec3d calculateNormalLine(triangle t, int point)
-	{
-		vec3d line;
-		line.x = t.p[point].x - t.p[0].x;
-		line.y = t.p[point].y - t.p[0].y;
-		line.z = t.p[point].z - t.p[0].z;
-
-		return line;
-	}
+	
 
 	bool OnUserUpdate(float fElapsedTime) override{
-
 		//clear the screen with a solid color
 		Fill(0, 0, ScreenWidth(), ScreenHeight(), PIXEL_SOLID, FG_BLACK);
-		mat4d matRotZ, matRotX;
-		fTheta += 1.0f * fElapsedTime;
+		Theta += 1.0f * fElapsedTime;
+
 
 
 		//Rotational Matrix in the Z direction
-		matRotZ.m[0][0] = cosf(fTheta);
-		matRotZ.m[0][1] = sinf(fTheta);
-		matRotZ.m[1][0] = -sinf(fTheta);
-		matRotZ.m[1][1] = cosf(fTheta);
-		matRotZ.m[2][2] = 1;
-		matRotZ.m[3][3] = 1;
+		mat4d matRotZ = M_RotationZ(Theta * 0.5f);
 
 		//Rotational Matrix in the X direction
-		matRotX.m[0][0] = 1;
-		matRotX.m[1][1] = cosf(fTheta * 0.5f);
-		matRotX.m[1][2] = sinf(fTheta * 0.5f);
-		matRotX.m[2][1] = -sinf(fTheta * 0.5f);
-		matRotX.m[2][2] = cosf(fTheta * 0.5f);
-		matRotX.m[3][3] = 1;
+		mat4d matRotX = M_RotationX(Theta);
+		mat4d trans_Matrix = M_MakeTranslation(0.0f, 0.0f, 4.0f);
 
+		mat4d univ_Matrix;
+		univ_Matrix = M_MakeIdentity();
+		univ_Matrix = M_MultiplyMatrix(matRotZ, matRotX);
+		univ_Matrix = M_MultiplyMatrix(univ_Matrix, trans_Matrix);
 
+		std::vector<triangle>raster;
+		 
 		//Draw our poligon using triangle operations
-		for (auto tri : meshCube.tris)
+		for (auto t : meshCube.triangles)
 		{
-			triangle tProj, tTranslated, triRotZ, triRotZX;
+			triangle tProj, tTransform;
 
-			MultVectorMatrix(tri.p[0], triRotZ.p[0], matRotZ);
-			MultVectorMatrix(tri.p[1], triRotZ.p[1], matRotZ);
-			MultVectorMatrix(tri.p[2], triRotZ.p[2], matRotZ);
+			tTransform.p[0] = M_MultiplyVector(univ_Matrix, t.p[0]);
+			tTransform.p[1] = M_MultiplyVector(univ_Matrix, t.p[1]);
+			tTransform.p[2] = M_MultiplyVector(univ_Matrix, t.p[2]);
 
-			MultVectorMatrix(triRotZ.p[0], triRotZX.p[0], matRotX);
-			MultVectorMatrix(triRotZ.p[1], triRotZX.p[1], matRotX);
-			MultVectorMatrix(triRotZ.p[2], triRotZX.p[2], matRotX);
-
-			tTranslated = triRotZX;
-			tTranslated.p[0].z = triRotZX.p[0].z + 3.0f;
-			tTranslated.p[1].z = triRotZX.p[1].z + 3.0f;
-			tTranslated.p[2].z = triRotZX.p[2].z + 3.0f;
-
-			//calculating normals for triangles for rendering optimization
+			// Calculate triangle Normal
 			vec3d normal, line1, line2;
 
-			line1 = calculateNormalLine(tTranslated, 1);
-			line2 = calculateNormalLine(tTranslated, 2);
-			
-			//calculate the normal using the previous lines
-			normal.x = line1.y * line2.z - line1.z * line2.y;
-			normal.y = line1.z * line2.x - line1.x * line2.z;
-			normal.z = line1.x * line2.y - line1.y * line2.x;
+			// Get lines either side of triangle
+			line1 = V_Subtract(tTransform.p[1], tTransform.p[0]);
+			line2 = V_Subtract(tTransform.p[2], tTransform.p[0]);
 
-			//normalizing normal by vector translation
-			float l = sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
-			normal.x /= l; normal.y /= l; normal.z /= l;
+			// Take cross product of lines to get normal with regards to triangle
+			normal = V_CrossProduct(line1, line2);
+			normal = V_Normalise(normal);
+	
+			vec3d ray = V_Subtract(tTransform.p[0], camera);
 
-			//if (normal.z < 0)
-			if(normal.x * (tTranslated.p[0].x - camera.x)+
-				normal.y * (tTranslated.p[0].y - camera.y) +
-				normal.z * (tTranslated.p[0].z - camera.z) < 0.0f)
+			// Check triangle visibility through basic ray casting
+			if (V_DotProduct(normal, ray) < 0.0f)
 			{
-				MultVectorMatrix(tTranslated.p[0], tProj.p[0], projMat);
-				MultVectorMatrix(tTranslated.p[1], tProj.p[1], projMat);
-				MultVectorMatrix(tTranslated.p[2], tProj.p[2], projMat);
+
+				// Create light source for point in 3D space
+				vec3d light = { 0.0f, 1.0f, -1.0f };
+				light = V_Normalise(light);
+
+				// check lighting of our polis
+				float dp = max(0.1f, V_DotProduct(light, normal));
+
+				CHAR_INFO c = GetColour(dp);
+				tTransform.color = c.Attributes;
+				tTransform.sym = c.Char.UnicodeChar;
+
+				//Project 3D space to 2D space
+				tProj.p[0] = M_MultiplyVector(projMat, tTransform.p[0]);
+				tProj.p[1] = M_MultiplyVector(projMat, tTransform.p[1]);
+				tProj.p[2] = M_MultiplyVector(projMat, tTransform.p[2]);
+
+				tProj.color = c.Attributes;
+				tProj.sym = c.Char.UnicodeChar;
+
+				tProj.p[0] = V_Divide(tProj.p[0], tProj.p[0].w);
+				tProj.p[1] = V_Divide(tProj.p[1], tProj.p[1].w);
+				tProj.p[2] = V_Divide(tProj.p[2], tProj.p[2].w);
 
 
-				tProj.p[0].x += 1.0f; tProj.p[0].y += 1.0f;
+				/*tProj.p[0].x += 1.0f; tProj.p[0].y += 1.0f;
 				tProj.p[1].x += 1.0f; tProj.p[1].y += 1.0f;
-				tProj.p[2].x += 1.0f; tProj.p[2].y += 1.0f;
+				tProj.p[2].x += 1.0f; tProj.p[2].y += 1.0f;*/
+
+				vec3d offset = { 1,1,0 };
+				tProj.p[0] = V_Add(tProj.p[0], offset);
+				tProj.p[1] = V_Add(tProj.p[1], offset);
+				tProj.p[2] = V_Add(tProj.p[2], offset);
+
 
 				tProj.p[0].x *= 0.5f * (float)ScreenWidth();
 				tProj.p[0].y *= 0.5f * (float)ScreenHeight();
@@ -184,10 +176,26 @@ public:
 				tProj.p[2].x *= 0.5f * (float)ScreenWidth();
 				tProj.p[2].y *= 0.5f * (float)ScreenHeight();
 
-				DrawTriangle(tProj.p[0].x, tProj.p[0].y,
-				tProj.p[1].x, tProj.p[1].y,
-				tProj.p[2].x, tProj.p[2].y, PIXEL_SOLID, FG_WHITE);
+				raster.push_back(tProj);
 			}
+		}
+		//sort triangles to draw using z axis as index
+		sort(raster.begin(), raster.end(), [](triangle &t1, triangle &t2)
+		{
+			float zcoord1 = (t1.p[0].z + t1.p[1].z + t1.p[2].z) / 3.0f;
+			float zcoord2 = (t2.p[0].z + t2.p[1].z + t2.p[2].z) / 3.0f;
+			return zcoord1 > zcoord2;
+
+		});
+		for (auto &tProj : raster)
+		{
+			FillTriangle(tProj.p[0].x, tProj.p[0].y,
+					tProj.p[1].x, tProj.p[1].y,
+					tProj.p[2].x, tProj.p[2].y, tProj.sym, tProj.color);
+
+			/*DrawTriangle(tProj.p[0].x, tProj.p[0].y,
+				tProj.p[1].x, tProj.p[1].y,
+				tProj.p[2].x, tProj.p[2].y, PIXEL_SOLID, FG_WHITE);*/
 		}
 		return true;
 	}
@@ -201,7 +209,7 @@ int main()
 	if (demo.ConstructConsole(256, 240, 4, 4))
 		demo.Start();
 	else {
-		perror("Could not open console");
+		perror("Error: ConstructConsole");
 	}
 }
 
