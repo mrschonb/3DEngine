@@ -1,2 +1,3 @@
 # 3DEngine
-Repo for my final Advanced programming course project
+THIS CODE IS A VISUAL STUDIO WINDOWS COMMAND LINE APPLICATION.
+TO RUN, OPEN THE PROJECT WITH VISUAL STUDIO
